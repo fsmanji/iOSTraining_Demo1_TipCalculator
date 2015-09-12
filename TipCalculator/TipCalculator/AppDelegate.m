@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "TipViewController.h"
+#import "Constants.h"
 
 @interface AppDelegate ()
 
@@ -19,10 +20,26 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // Override point for customization after application launch.
     
+    //create defaults;
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    if ([defaults objectForKey:kDefaultTipRateKey] == nil) {
+        
+        
+        NSArray* values = @[@(0.1), @(0.15), @(0.2)];
+        [defaults setObject:values forKey:kTipValuesKey];
+        
+        [defaults setFloat:0.15 forKey:kDefaultTipRateKey];
+        [defaults setInteger:1 forKey:kDefaultTipIndexKey];
+    }
+    
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
-    TipViewController *viewController = [[TipViewController alloc] initWithNibName:@"TipViewController" bundle:nil];
+    TipViewController *viewController = [[TipViewController alloc] init];
     UINavigationController* navController = [[UINavigationController alloc] initWithRootViewController:viewController];
+    
     self.window.rootViewController = navController;
+    
+    //for keyboard
+    //In simulator, you need to disconnect hardware keyboard, otherwise the soft keyboard won't show up in simulator
     [self.window makeKeyAndVisible];
     return YES;
     
