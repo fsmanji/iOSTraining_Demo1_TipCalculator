@@ -16,13 +16,14 @@
 @property (weak, nonatomic) IBOutlet UILabel *tipAmountLabel;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *tipSegmentView;
 @property (weak, nonatomic) IBOutlet UILabel *tipRateLabel;
+@property (weak, nonatomic) IBOutlet UILabel *totalLabel;
 
 @property (nonatomic) NSArray* tipValues;
 
 - (IBAction)onTapOutside:(id)sender;
 - (IBAction)onBillChanged:(id)sender;
 
-- (void) updateTipRate;
+- (void) updateValues;
 - (void) onSettingsButton;
 
 @end
@@ -50,14 +51,13 @@
     //add settings item
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Settings" style:UIBarButtonItemStylePlain target:self action:@selector(onSettingsButton)];
     
-    [self updateFromSettings];
+    //[self updateFromSettings];
 
 }
 
 - (void)updateFromSettings {
     //load defaults value
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-    float tipRate = [defaults floatForKey:kDefaultTipRateKey];
     tipValues = [defaults objectForKey:kTipValuesKey];
     
     //load default segments
@@ -68,7 +68,7 @@
     
     [self loadSegmentControl:tipSegmentView andSelect:index];
     
-    [self updateTipRate];
+    [self updateValues];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -84,23 +84,26 @@
     //this will close the soft keyboard
     [self.view endEditing:YES];
     
-    [self updateTipRate];
+    [self updateValues];
 }
 
 - (IBAction)onBillChanged:(id)sender {
-    [self updateTipRate];
+    [self updateValues];
 }
 
-- (void) updateTipRate {
+- (void) updateValues {
     float bill = [self.billInput.text floatValue];
     
     float tipRate = [tipValues[self.tipSegmentView.selectedSegmentIndex] floatValue];
     
     float tipAmount = bill * tipRate;
+    float total = bill + tipAmount;
     
     self.tipRateLabel.text = [NSString stringWithFormat:kTipRateFormat, tipRate * 100];
     
     self.tipAmountLabel.text = [NSString stringWithFormat:kTipFormat, tipAmount];
+    self.totalLabel.text = [NSString stringWithFormat:kTipFormat, total];
+    
     
 }
 
