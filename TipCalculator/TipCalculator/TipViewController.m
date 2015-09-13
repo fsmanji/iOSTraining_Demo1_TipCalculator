@@ -59,6 +59,11 @@
     //add settings item
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Settings" style:UIBarButtonItemStylePlain target:self action:@selector(onSettingsButton)];
     
+    // Add a "textFieldDidChange" notification method to the text field control.
+    [self.billInput addTarget:self
+                  action:@selector(onBillChanged:)
+        forControlEvents:UIControlEventEditingChanged];
+    
     lastTipRate = 0;
     lastBill = 0;
 }
@@ -130,7 +135,7 @@
     [UIView transitionWithView:totalLabel
                       duration:1.0f
                        options:UIViewAnimationOptionCurveEaseInOut |
-     UIViewAnimationOptionTransitionCurlUp
+     UIViewAnimationOptionTransitionFlipFromBottom
                     animations:^{
                         self.totalLabel.text = [NSString stringWithFormat:kTipFormat, total];
                     } completion:nil];
