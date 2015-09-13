@@ -20,6 +20,10 @@
 
 @property (nonatomic) NSArray* tipValues;
 
+//Used to identify whether need to re
+@property float lastTipRate;
+@property float lastBill;
+
 - (IBAction)onTapOutside:(id)sender;
 - (IBAction)onBillChanged:(id)sender;
 
@@ -34,6 +38,9 @@
 @synthesize tipRateLabel;
 @synthesize tipSegmentView;
 @synthesize totalLabel;
+
+@synthesize lastTipRate;
+@synthesize lastBill;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -52,8 +59,8 @@
     //add settings item
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithTitle:@"Settings" style:UIBarButtonItemStylePlain target:self action:@selector(onSettingsButton)];
     
-    //[self updateFromSettings];
-
+    lastTipRate = 0;
+    lastBill = 0;
 }
 
 - (void)updateFromSettings {
@@ -97,19 +104,25 @@
     
     float tipRate = [tipValues[self.tipSegmentView.selectedSegmentIndex] floatValue];
     
+    if(bill == lastBill && tipRate == lastTipRate) {
+        return;
+    }
+    
+    //save last tiprate and bill amount;
+    lastTipRate = tipRate;
+    lastBill = bill;
+    
+    //calculate new tip and total bill
     float tipAmount = bill * tipRate;
     float total = bill + tipAmount;
     
     self.tipRateLabel.text = [NSString stringWithFormat:kTipRateFormat, tipRate * 100];
     
-    
-    
-    
     //add a little animation
     [UIView transitionWithView:self.tipAmountLabel
                       duration:.5f
                        options:UIViewAnimationOptionCurveEaseInOut |
-     UIViewAnimationOptionTransitionCurlUp
+     UIViewAnimationOptionTransitionFlipFromBottom
                     animations:^{
                        self.tipAmountLabel.text = [NSString stringWithFormat:kTipFormat, tipAmount];
                     } completion:nil];
@@ -117,7 +130,7 @@
     [UIView transitionWithView:totalLabel
                       duration:1.0f
                        options:UIViewAnimationOptionCurveEaseInOut |
-     UIViewAnimationOptionTransitionFlipFromBottom
+     UIViewAnimationOptionTransitionCurlUp
                     animations:^{
                         self.totalLabel.text = [NSString stringWithFormat:kTipFormat, total];
                     } completion:nil];
