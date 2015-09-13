@@ -33,6 +33,7 @@
 @synthesize tipValues;
 @synthesize tipRateLabel;
 @synthesize tipSegmentView;
+@synthesize totalLabel;
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -101,9 +102,25 @@
     
     self.tipRateLabel.text = [NSString stringWithFormat:kTipRateFormat, tipRate * 100];
     
-    self.tipAmountLabel.text = [NSString stringWithFormat:kTipFormat, tipAmount];
-    self.totalLabel.text = [NSString stringWithFormat:kTipFormat, total];
     
+    
+    
+    //add a little animation
+    [UIView transitionWithView:self.tipAmountLabel
+                      duration:.5f
+                       options:UIViewAnimationOptionCurveEaseInOut |
+     UIViewAnimationOptionTransitionCurlUp
+                    animations:^{
+                       self.tipAmountLabel.text = [NSString stringWithFormat:kTipFormat, tipAmount];
+                    } completion:nil];
+    
+    [UIView transitionWithView:totalLabel
+                      duration:1.0f
+                       options:UIViewAnimationOptionCurveEaseInOut |
+     UIViewAnimationOptionTransitionFlipFromBottom
+                    animations:^{
+                        self.totalLabel.text = [NSString stringWithFormat:kTipFormat, total];
+                    } completion:nil];
     
 }
 
